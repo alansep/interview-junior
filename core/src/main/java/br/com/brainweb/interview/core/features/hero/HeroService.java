@@ -3,6 +3,7 @@ package br.com.brainweb.interview.core.features.hero;
 import br.com.brainweb.interview.core.features.powerstats.PowerStatsRepository;
 import br.com.brainweb.interview.model.Hero;
 import br.com.brainweb.interview.model.PowerStats;
+import br.com.brainweb.interview.model.dto.HeroDTO;
 import br.com.brainweb.interview.model.request.CreateHeroRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,4 +26,11 @@ public class HeroService {
         UUID powerStatsId = powerStatsRepository.create(new PowerStats(createHeroRequest));
         return heroRepository.create(new Hero(createHeroRequest, powerStatsId));
     }
+
+    public HeroDTO findById(UUID uuid){
+        HeroDTO hero = heroRepository.findById(uuid);
+        hero.setPowerStats(powerStatsRepository.findById(hero.getPowerStats().getId()));
+        return hero;
+    }
+
 }
