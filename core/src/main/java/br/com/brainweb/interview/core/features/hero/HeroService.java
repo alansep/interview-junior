@@ -33,4 +33,11 @@ public class HeroService {
         return hero;
     }
 
+    public void deleteById(UUID uuid){
+        HeroDTO hero = heroRepository.findById(uuid);
+        heroRepository.deleteById(uuid);
+        powerStatsRepository.deleteById(hero.getPowerStats().getId());
+
+    }
+
 }

@@ -29,6 +29,8 @@ public class HeroRepository {
     private static final String FIND_BY_ID_QUERY = "SELECT * FROM " +
             " interview_service.hero WHERE id = ?";
 
+    private static final String DELETE_BY_ID = "DELETE FROM interview_service.hero where id = '";
+
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Autowired
@@ -62,5 +64,9 @@ public class HeroRepository {
             throw new InterviewGenericException(HttpStatus.NOT_FOUND, "There's no hero with this id! :(");
         }
         return herois.get(0);
+    }
+
+    public void deleteById(UUID id){
+        jdbcTemplate.execute(DELETE_BY_ID + id + '\'');
     }
 }

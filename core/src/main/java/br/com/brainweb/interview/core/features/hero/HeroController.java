@@ -37,4 +37,10 @@ public class HeroController {
     public ResponseEntity<HeroDTO> find(@RequestParam(value="id", defaultValue = "", required = true) UUID id){
         return ResponseEntity.status(HttpStatus.OK).body(heroService.findById(id));
     }
+
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@RequestParam(value="id", defaultValue = "", required = true) UUID id){
+        heroService.deleteById(id);
+    }
 }
