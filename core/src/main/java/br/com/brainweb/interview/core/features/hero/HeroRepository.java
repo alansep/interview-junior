@@ -12,7 +12,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +32,17 @@ public class HeroRepository {
             " interview_service.hero WHERE name like ?";
 
     private static final String DELETE_BY_ID = "DELETE FROM interview_service.hero where id = '";
+
+    private static final String UPDATE_BY_ID = "UPDATE " +
+            "	interview_service.hero " +
+            "SET " +
+            "	name = ?, " +
+            "	race = ?, " +
+            "	enabled = NOT ?, " +
+            "	updated_at = now() " +
+            "WHERE " +
+            "	id = ? ";
+
 
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -63,17 +73,17 @@ public class HeroRepository {
                                 .updatedAtDate(new Date(rs.getTimestamp("updated_at").getTime()))
                                 .build()
         );
-        if(herois.isEmpty()) {
+        if (herois.isEmpty()) {
             throw new InterviewGenericException(HttpStatus.NOT_FOUND, "There's no hero with this id! :(");
         }
         return herois.get(0);
     }
 
-    public void deleteById(UUID id){
+    public void deleteById(UUID id) {
         jdbcTemplate.execute(DELETE_BY_ID + id + '\'');
     }
 
-    public List<HeroDTO> findByName(String name){
+    public List<HeroDTO> findByName(String name) {
         List<HeroDTO> herois = jdbcTemplate.query(FIND_BY_NAME, new Object[]{"%" + name + "%"},
                 (rs, rowNum) ->
                         HeroDTO
@@ -88,4 +98,28 @@ public class HeroRepository {
         );
         return herois;
     }
+
+    public void updateHero(HeroDTO savedHero) {
+        System.out.println(savedHero.isEnabled());
+        jdbcTemplate.update(getUpdateQuery(savedHero.isEnabled()),
+                savedHero.getName(), savedHero.getRace().toString(), savedHero.getId());
+    }
+
+    private String getUpdateQuery(boolean enabled) {
+        StringBuilder sql = new StringBuilder();
+
+        sql.append("UPDATE ");
+        sql.append("	interview_service.hero ");
+        sql.append("SET ");
+        sql.append("	name = ?, ");
+        sql.append("	race = ?, ");
+        sql.append("	enabled = " + (enabled ? "TRUE" : "FALSE") + ", ");
+        sql.append("	updated_at = now() ");
+        sql.append("WHERE ");
+        sql.append("	id = ? ");
+
+        return sql.toString();
+    }
+
 }
+

@@ -23,6 +23,18 @@ public class PowerStatsRepository {
 
     private static final String DELETE_BY_ID = "DELETE FROM power_stats where id = '";
 
+    private static final String UPDATE_BY_ID = "UPDATE " +
+            "	interview_service.power_stats " +
+            "SET " +
+            "	strength = ?, " +
+            "	agility = ?, " +
+            "	dexterity = ?, " +
+            "	intelligence = ?, " +
+            "	updated_at = now() " +
+            "WHERE " +
+            "	id = ? ";
+
+
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Autowired
@@ -49,7 +61,13 @@ public class PowerStatsRepository {
                         .build()).get(0);
     }
 
-    public void deleteById(UUID id){
-        jdbcTemplate.execute(DELETE_BY_ID + id + "\'");
+    public void deleteById(UUID id) {
+        jdbcTemplate.execute(DELETE_BY_ID + id + "'");
+    }
+
+    public void updateStats(PowerStats powerStats) {
+        jdbcTemplate.update(UPDATE_BY_ID, powerStats.getStrength(),
+                powerStats.getAgility(), powerStats.getDexterity(),
+                powerStats.getIntelligence(), powerStats.getId());
     }
 }

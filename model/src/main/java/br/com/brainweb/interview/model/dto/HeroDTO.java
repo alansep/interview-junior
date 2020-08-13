@@ -6,11 +6,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.UUID;
 
@@ -21,12 +19,20 @@ import java.util.UUID;
 @Setter
 public class HeroDTO {
 
+    @NotNull
     private UUID id;
+
+    @NotEmpty
     private String name;
+
+    @NotNull
     private Race race;
+
+    @NotNull
     private boolean enabled;
 
     @JsonProperty("powerStats")
+    @NotNull
     private PowerStats powerStats;
 
     @JsonIgnore
@@ -45,5 +51,6 @@ public class HeroDTO {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         return formatter.format(updatedAtDate);
     }
+
 
 }

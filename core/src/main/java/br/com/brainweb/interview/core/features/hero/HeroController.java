@@ -1,17 +1,14 @@
 package br.com.brainweb.interview.core.features.hero;
 
-import br.com.brainweb.interview.model.Hero;
 import br.com.brainweb.interview.model.dto.HeroDTO;
 import br.com.brainweb.interview.model.request.CreateHeroRequest;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
@@ -35,22 +32,34 @@ public class HeroController {
     }
 
     @GetMapping
-    public ResponseEntity<HeroDTO> find(@RequestParam(value="id", defaultValue = "", required = true) UUID id){
+    public ResponseEntity<HeroDTO> find(@RequestParam(value = "id", defaultValue = "", required = true) UUID id) {
         return ResponseEntity.status(HttpStatus.OK).body(heroService.findById(id));
     }
 
     @GetMapping("/filter")
-    public ResponseEntity<?> findByName(@RequestParam(value="name", required = false, defaultValue = "") String name) {
+    public ResponseEntity<?> findByName(@RequestParam(value = "name", required = false, defaultValue = "") String name) {
         List<HeroDTO> heroes = heroService.findByName(name);
-        if(heroes.isEmpty()){
+        if (heroes.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return ResponseEntity.status(HttpStatus.OK).body(heroes);
         }
     }
+
+    @PostMapping("/compare")
+    public ResponseEntity<?> compareHeroes(@RequestBody List<UUID> ids) {
+        return ResponseEntity.ok().body(heroService.compareHeroes(ids));
+    }
+
+    @PutMapping
+    public ResponseEntity<HeroDTO> update(@RequestParam(value = "id", defaultValue = "", required = true) UUID id, @RequestBody @Valid HeroDTO updatedHero) {
+        return ResponseEntity.status(HttpStatus.OK).body(heroService.updateHeroById(id, updatedHero));
+    }
+
+
     @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@RequestParam(value="id", defaultValue = "", required = true) UUID id){
+    public void delete(@RequestParam(value = "id", defaultValue = "", required = true) UUID id) {
         heroService.deleteById(id);
     }
 }
