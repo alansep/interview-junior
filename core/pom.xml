@@ -92,7 +92,7 @@
                     <reuseForks>true</reuseForks>
                     <systemPropertyVariables>
                         <!--suppress UnresolvedMavenProperty -->
-                        <it-database.port>${brainweb-interview-postgres-it.port}</it-database.port>
+                        <it-database.port>5432</it-database.port>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
