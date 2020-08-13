@@ -29,6 +29,9 @@ public class HeroRepository {
     private static final String FIND_BY_ID_QUERY = "SELECT * FROM " +
             " interview_service.hero WHERE id = ?";
 
+    private static final String FIND_BY_NAME = "SELECT * FROM " +
+            " interview_service.hero WHERE name like ?";
+
     private static final String DELETE_BY_ID = "DELETE FROM interview_service.hero where id = '";
 
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -68,5 +71,21 @@ public class HeroRepository {
 
     public void deleteById(UUID id){
         jdbcTemplate.execute(DELETE_BY_ID + id + '\'');
+    }
+
+    public List<HeroDTO> findByName(String name){
+        List<HeroDTO> herois = jdbcTemplate.query(FIND_BY_NAME, new Object[]{"%" + name + "%"},
+                (rs, rowNum) ->
+                        HeroDTO
+                                .builder()
+                                .id(UUID.fromString(rs.getString("id")))
+                                .name(rs.getString("name"))
+                                .race(Race.valueOf(rs.getString("race")))
+                                .powerStats(PowerStats.builder().id(UUID.fromString(rs.getString("power_stats_id"))).build())
+                                .createdAtDate(new Date(rs.getTimestamp("created_at").getTime()))
+                                .updatedAtDate(new Date(rs.getTimestamp("updated_at").getTime()))
+                                .build()
+        );
+        return herois;
     }
 }

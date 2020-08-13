@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 
 import static java.lang.String.format;
@@ -38,6 +39,15 @@ public class HeroController {
         return ResponseEntity.status(HttpStatus.OK).body(heroService.findById(id));
     }
 
+    @GetMapping("/filter")
+    public ResponseEntity<?> findByName(@RequestParam(value="name", required = false, defaultValue = "") String name) {
+        List<HeroDTO> heroes = heroService.findByName(name);
+        if(heroes.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).body(heroes);
+        }
+    }
     @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@RequestParam(value="id", defaultValue = "", required = true) UUID id){
